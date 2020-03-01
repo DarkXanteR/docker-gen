@@ -94,6 +94,49 @@ func generalizedGroupByKey(funcName string, entries interface{}, key string, add
 	return generalizedGroupBy(funcName, entries, getKey, addEntry)
 }
 
+// splitKeyValuePairs splits a input string into a map of key value pairs, first string is split by listSep into list items, then each list item is split by kvpSep into key value pair
+// if a list item does not contai the kvpSep a defaultKey can be provided, where these values are grouped, or if omitted these values are used as key and value
+func splitKeyValuePairs(input string, listSep string, kvpSep string, defaultKey ...string) map[string]string {
+	keyValuePairs := strings.Split(input, listSep)
+
+	output := map[string]string{}
+	for _, kvp := range keyValuePairs {
+		var key string
+		var value string
+		if strings.Contains(kvp, kvpSep) {
+			splitted := strings.Split(kvp, kvpSep)
+			key = splitted[0]
+			value = splitted[1]
+		} else if len(defaultKey) == 0 || defaultKey[0] == "" {
+			// no key found, no default key specified
+			key = kvp
+			value = kvp
+		} else {
+			// no key found, use default key specified instead
+			key = defaultKey[0]
+			value = kvp
+		}
+
+		output[key] = value
+	}
+
+	return output
+}
+
+// groupByMultiKeyValuePairs similar to groupByMulti, but the key value ist split into a list (delimited by listSep) of key value pairs (seperated by kvpSep: <key>kvpSep<value, e.g key1=value1>)
+// An array or slice entry will show up in the output map under all of the list key value pair keys
+func groupByMultiKeyValuePairs(entries interface{}, key, listSep string, kvpSep string, defaultKey string) (map[string][]interface{}, error) {
+	return generalizedGroupByKey("groupByMultiKeyValuePairs", entries, key, func(groups map[string][]interface{}, value interface{}, v interface{}) {
+
+		keyValuePairs := splitKeyValuePairs(value.(string), listSep, kvpSep, defaultKey)
+		for key := range keyValuePairs {
+			groups[key] = append(groups[key], v)
+		}
+	})
+}
+
+// groupByMulti groups a generic array or slice by the path property keys value, where the path value is first split by sep into a list of key strings.
+// An array or slice entry will show up in the output map under all of the list keys
 func groupByMulti(entries interface{}, key, sep string) (map[string][]interface{}, error) {
 	return generalizedGroupByKey("groupByMulti", entries, key, func(groups map[string][]interface{}, value interface{}, v interface{}) {
 		items := strings.Split(value.(string), sep)
@@ -435,44 +478,46 @@ func when(condition bool, trueValue, falseValue interface{}) interface{} {
 
 func newTemplate(name string) *template.Template {
 	tmpl := template.New(name).Funcs(template.FuncMap{
-		"closest":                arrayClosest,
-		"coalesce":               coalesce,
-		"contains":               contains,
-		"dict":                   dict,
-		"dir":                    dirList,
-		"exists":                 exists,
-		"first":                  arrayFirst,
-		"groupBy":                groupBy,
-		"groupByKeys":            groupByKeys,
-		"groupByLabel":           groupByLabel,
-		"groupByMulti":           groupByMulti,
-		"hasPrefix":              hasPrefix,
-		"hasSuffix":              hasSuffix,
-		"intersect":              intersect,
-		"json":                   marshalJson,
-		"keys":                   keys,
-		"last":                   arrayLast,
-		"parseBool":              strconv.ParseBool,
-		"parseJson":              unmarshalJson,
-		"queryEscape":            url.QueryEscape,
-		"readFile":               readFile,
-		"replace":                strings.Replace,
-		"sha1":                   hashSha1,
-		"split":                  strings.Split,
-		"splitN":                 strings.SplitN,
-		"trim":                   trim,
-		"trimPrefix":             trimPrefix,
-		"trimSuffix":             trimSuffix,
-		"when":                   when,
-		"where":                  where,
-		"whereAll":               whereAll,
-		"whereAny":               whereAny,
-		"whereExist":             whereExist,
-		"whereLabelDoesNotExist": whereLabelDoesNotExist,
-		"whereLabelExists":       whereLabelExists,
-		"whereLabelValueMatches": whereLabelValueMatches,
-		"whereNot":               whereNot,
-		"whereNotExist":          whereNotExist,
+		"closest":                		arrayClosest,
+		"coalesce":               		coalesce,
+		"contains":               		contains,
+		"dict":                   		dict,
+		"dir":                    		dirList,
+		"exists":                 		exists,
+		"first":                  		arrayFirst,
+		"groupBy":                		groupBy,
+		"groupByKeys":            		groupByKeys,
+		"groupByLabel":           		groupByLabel,
+		"groupByMulti":           		groupByMulti,
+		"groupByMultiKeyValuePairs":	groupByMultiKeyValuePairs,
+		"hasPrefix":              		hasPrefix,
+		"hasSuffix":              		hasSuffix,
+		"intersect":              		intersect,
+		"json":                   		marshalJson,
+		"keys":                   		keys,
+		"last":                   		arrayLast,
+		"parseBool":              		strconv.ParseBool,
+		"parseJson":              		unmarshalJson,
+		"queryEscape":            		url.QueryEscape,
+		"readFile":               		readFile,
+		"replace":                		strings.Replace,
+		"sha1":                   		hashSha1,
+		"split":                  		strings.Split,
+		"splitKeyValuePairs":     		splitKeyValuePairs,
+		"splitN":                 		strings.SplitN,
+		"trim":                   		trim,
+		"trimPrefix":             		trimPrefix,
+		"trimSuffix":             		trimSuffix,
+		"when":                   		when,
+		"where":                  		where,
+		"whereAll":               		whereAll,
+		"whereAny":               		whereAny,
+		"whereExist":             		whereExist,
+		"whereLabelDoesNotExist": 		whereLabelDoesNotExist,
+		"whereLabelExists":       		whereLabelExists,
+		"whereLabelValueMatches": 		whereLabelValueMatches,
+		"whereNot":               		whereNot,
+		"whereNotExist":          		whereNotExist,
 	})
 	return tmpl
 }
