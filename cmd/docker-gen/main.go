@@ -96,7 +96,7 @@ func initFlags() {
 	flag.BoolVar(&includeStopped, "include-stopped", false, "include stopped containers")
 	flag.BoolVar(&notifyOutput, "notify-output", false, "log the output(stdout/stderr) of notify command")
 	flag.StringVar(&notifyCmd, "notify", "", "run command after template is regenerated (e.g `restart xyz`)")
-    flag.StringVar(&notifySigHUPContainerID, "notify-sighup", "",
+    flag.StringVar(&notifyContainerID, "notify-sighup", "",
         "send HUP signal to container. You can either pass a container name/id or a filter key=value to send to multiple containers. Equivalent to docker kill -s HUP `container-ID`")
 	flag.StringVar(&notifyContainerID, "notify-container", "",
 		"container to send a signal to")
