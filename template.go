@@ -31,7 +31,7 @@ func exists(path string) (bool, error) {
 	return false, err
 }
 
-func read(path string) (string, error) {
+func readFile(path string) (string, error) {
 	_, err := os.Stat(path)
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -441,7 +441,7 @@ func newTemplate(name string) *template.Template {
 		"dict":                   dict,
 		"dir":                    dirList,
 		"exists":                 exists,
-		"read":                   read,
+		"readFile":               readFile,
 		"first":                  arrayFirst,
 		"groupBy":                groupBy,
 		"groupByKeys":            groupByKeys,
