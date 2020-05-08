@@ -44,6 +44,9 @@ release: dist
 
 get-deps:
 	go get github.com/robfig/glock
+	go get github.com/BurntSushi/toml
+	go get github.com/fsouza/go-dockerclient
+	go get github.com/go-yaml/yaml
 	glock sync -n < GLOCKFILE
 
 check-gofmt:
