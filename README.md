@@ -2,7 +2,7 @@ docker-gen
 =====
 
 ![latest 0.7.3](https://img.shields.io/badge/latest-0.7.3-green.svg?style=flat)
-[![Build Status](https://travis-ci.org/jwilder/docker-gen.svg?branch=master)](https://travis-ci.org/jwilder/docker-gen)
+![Docker Image CI](https://github.com/matthiasmetzen/docker-gen/workflows/Docker%20Image%20CI/badge.svg?branch=master)
 ![License MIT](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)
 
 `docker-gen` is a file generator that renders templates using docker container meta-data.
