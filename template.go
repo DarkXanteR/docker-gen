@@ -41,8 +41,8 @@ func readFile(path string) (string, error) {
 	}
 	b, err := ioutil.ReadFile(path)
 	if err != nil {
-        return "", err
-    }
+		return "", err
+	}
 	return string(b), nil
 }
 
@@ -478,46 +478,46 @@ func when(condition bool, trueValue, falseValue interface{}) interface{} {
 
 func newTemplate(name string) *template.Template {
 	tmpl := template.New(name).Funcs(template.FuncMap{
-		"closest":                		arrayClosest,
-		"coalesce":               		coalesce,
-		"contains":               		contains,
-		"dict":                   		dict,
-		"dir":                    		dirList,
-		"exists":                 		exists,
-		"first":                  		arrayFirst,
-		"groupBy":                		groupBy,
-		"groupByKeys":            		groupByKeys,
-		"groupByLabel":           		groupByLabel,
-		"groupByMulti":           		groupByMulti,
-		"groupByMultiKeyValuePairs":	groupByMultiKeyValuePairs,
-		"hasPrefix":              		hasPrefix,
-		"hasSuffix":              		hasSuffix,
-		"intersect":              		intersect,
-		"json":                   		marshalJson,
-		"keys":                   		keys,
-		"last":                   		arrayLast,
-		"parseBool":              		strconv.ParseBool,
-		"parseJson":              		unmarshalJson,
-		"queryEscape":            		url.QueryEscape,
-		"readFile":               		readFile,
-		"replace":                		strings.Replace,
-		"sha1":                   		hashSha1,
-		"split":                  		strings.Split,
-		"splitKeyValuePairs":     		splitKeyValuePairs,
-		"splitN":                 		strings.SplitN,
-		"trim":                   		trim,
-		"trimPrefix":             		trimPrefix,
-		"trimSuffix":             		trimSuffix,
-		"when":                   		when,
-		"where":                  		where,
-		"whereAll":               		whereAll,
-		"whereAny":               		whereAny,
-		"whereExist":             		whereExist,
-		"whereLabelDoesNotExist": 		whereLabelDoesNotExist,
-		"whereLabelExists":       		whereLabelExists,
-		"whereLabelValueMatches": 		whereLabelValueMatches,
-		"whereNot":               		whereNot,
-		"whereNotExist":          		whereNotExist,
+		"closest":                   arrayClosest,
+		"coalesce":                  coalesce,
+		"contains":                  contains,
+		"dict":                      dict,
+		"dir":                       dirList,
+		"exists":                    exists,
+		"first":                     arrayFirst,
+		"groupBy":                   groupBy,
+		"groupByKeys":               groupByKeys,
+		"groupByLabel":              groupByLabel,
+		"groupByMulti":              groupByMulti,
+		"groupByMultiKeyValuePairs": groupByMultiKeyValuePairs,
+		"hasPrefix":                 hasPrefix,
+		"hasSuffix":                 hasSuffix,
+		"intersect":                 intersect,
+		"json":                      marshalJson,
+		"keys":                      keys,
+		"last":                      arrayLast,
+		"parseBool":                 strconv.ParseBool,
+		"parseJson":                 unmarshalJson,
+		"queryEscape":               url.QueryEscape,
+		"readFile":                  readFile,
+		"replace":                   strings.Replace,
+		"sha1":                      hashSha1,
+		"split":                     strings.Split,
+		"splitKeyValuePairs":        splitKeyValuePairs,
+		"splitN":                    strings.SplitN,
+		"trim":                      trim,
+		"trimPrefix":                trimPrefix,
+		"trimSuffix":                trimSuffix,
+		"when":                      when,
+		"where":                     where,
+		"whereAll":                  whereAll,
+		"whereAny":                  whereAny,
+		"whereExist":                whereExist,
+		"whereLabelDoesNotExist":    whereLabelDoesNotExist,
+		"whereLabelExists":          whereLabelExists,
+		"whereLabelValueMatches":    whereLabelValueMatches,
+		"whereNot":                  whereNot,
+		"whereNotExist":             whereNotExist,
 	})
 	return tmpl
 }
@@ -579,7 +579,7 @@ func GenerateFile(config Config, containers Context) bool {
 
 		oldContents := []byte{}
 		if fi, err := os.Stat(config.Dest); err == nil || os.IsNotExist(err) {
-			if (err != nil && os.IsNotExist(err)) {
+			if err != nil && os.IsNotExist(err) {
 				emptyFile, err := os.Create(config.Dest)
 				if err != nil {
 					log.Fatalf("Unable to create empty destination file: %s\n", err)

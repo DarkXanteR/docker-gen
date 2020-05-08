@@ -11,7 +11,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/fsouza/go-dockerclient"
+	docker "github.com/fsouza/go-dockerclient"
 )
 
 type generator struct {
@@ -351,11 +351,11 @@ func (g *generator) sendSignalToContainers(config Config) {
 				log.Printf("Error finding containers to send signal to: %s %s", container, err)
 			}
 			for _, container := range containers {
-				g.sendSignalToContainer(container.ID, signal)
+				g.sendSignalToContainer(container.ID, docker.Signal(signal))
 			}
 
 		} else {
-			g.sendSignalToContainer(container, signal)
+			g.sendSignalToContainer(container, docker.Signal(signal))
 		}
 	}
 }
