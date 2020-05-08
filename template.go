@@ -18,6 +18,8 @@ import (
 	"strings"
 	"syscall"
 	"text/template"
+
+	"gopkg.in/yaml.v2"
 )
 
 func exists(path string) (bool, error) {
@@ -394,6 +396,23 @@ func unmarshalJson(input string) (interface{}, error) {
 	return v, nil
 }
 
+func marshalYaml(input interface{}) (string, error) {
+	var buf bytes.Buffer
+	enc := yaml.NewEncoder(&buf)
+	if err := enc.Encode(input); err != nil {
+		return "", err
+	}
+	return strings.TrimSuffix(buf.String(), "\n"), nil
+}
+
+func unmarshalYaml(input string) (interface{}, error) {
+	var v interface{}
+	if err := yaml.Unmarshal([]byte(input), &v); err != nil {
+		return nil, err
+	}
+	return v, nil
+}
+
 // arrayFirst returns first item in the array or nil if the
 // input is nil or empty
 func arrayFirst(input interface{}) interface{} {
@@ -494,10 +513,12 @@ func newTemplate(name string) *template.Template {
 		"hasSuffix":                 hasSuffix,
 		"intersect":                 intersect,
 		"json":                      marshalJson,
+		"yaml":                      marshalYaml,
 		"keys":                      keys,
 		"last":                      arrayLast,
 		"parseBool":                 strconv.ParseBool,
 		"parseJson":                 unmarshalJson,
+		"parseYaml":                 unmarshalYaml,
 		"queryEscape":               url.QueryEscape,
 		"readFile":                  readFile,
 		"replace":                   strings.Replace,
