@@ -20,3 +20,5 @@ jobs:
         registry: docker.pkg.github.com
         push_git_tag: true
         image_name: matthiasmetzen/docker-gen/docker-gen
+        image_tag: alpine,latest
+        dockerfile: Dockerfile
