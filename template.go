@@ -19,7 +19,7 @@ import (
 	"syscall"
 	"text/template"
 
-	"gopkg.in/yaml.v2"
+	"github.com/go-yaml/yaml"
 )
 
 func exists(path string) (bool, error) {
