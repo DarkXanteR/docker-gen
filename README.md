@@ -374,6 +374,7 @@ The exhaustive list of functions, among with their implemebtation, is available 
 * *`parseBool $string`*: parseBool returns the boolean value represented by the string. It accepts 1, t, T, TRUE, true, True, 0, f, F, FALSE, false, False. Any other value returns an error. Alias for [`strconv.ParseBool`](http://golang.org/pkg/strconv/#ParseBool) 
 * *`parseJSON $string`*: parseJSON returns the JSON struct represented by the string. Wrapper around [`json.Unmarshal`](https://golang.org/pkg/encoding/json/#Unmarshal)
 * *`queryEscape $string`*: escapes the string so it can be safely placed inside a URL query. Alias for [`url.QueryEscape`](https://golang.org/pkg/net/url/#QueryEscape) 
+* *`read $string`*: Read the content of the file located at `$path`
 * *`sha1 $string`*: Returns the hexadecimal representation of the SHA1 hash of `$string`.
 * *`split $string $sep`*: Splits `$string` into a slice of substrings delimited by `$sep`. Alias for [`strings.Split`](http://golang.org/pkg/strings/#Split)
 * *`splitN $string $sep $count`*: Splits `$string` into a slice of substrings delimited by `$sep`, with number of substrings returned determined by `$count`. Alias for [`strings.SplitN`](https://golang.org/pkg/strings/#SplitN)
