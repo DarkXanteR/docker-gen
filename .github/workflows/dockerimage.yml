@@ -13,7 +13,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: whoan/docker-build-with-cache-action@v5
+    - name: Checkout
+      uses: actions/checkout@v2
+    
+    - name: build
+      uses: whoan/docker-build-with-cache-action@v5
+      env:
+        DOCKER_BUILDKIT: 1
       with:
         username: matthiasmetzen
         password: "${{ secrets.GITHUB_TOKEN }}"  # you don't need to manually set this secret. GitHub does it on your behalf
