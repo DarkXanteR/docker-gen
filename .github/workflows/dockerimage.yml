@@ -18,4 +18,5 @@ jobs:
         username: matthiasmetzen
         password: "${{ secrets.GITHUB_TOKEN }}"  # you don't need to manually set this secret. GitHub does it on your behalf
         registry: docker.pkg.github.com
-        image_name: docker-gen
+        push_git_tag: true
+        image_name: matthiasmetzen/docker-gen
