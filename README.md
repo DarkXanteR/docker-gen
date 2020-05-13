@@ -374,7 +374,7 @@ The exhaustive list of functions, among with their implemebtation, is available 
 * *`replace $string $old $new $count`*: Replaces up to `$count` occurences of `$old` with `$new` in `$string`. Alias for [`strings.Replace`](http://golang.org/pkg/strings/#Replace)
 * *`parseBool $string`*: parseBool returns the boolean value represented by the string. It accepts 1, t, T, TRUE, true, True, 0, f, F, FALSE, false, False. Any other value returns an error. Alias for [`strconv.ParseBool`](http://golang.org/pkg/strconv/#ParseBool) 
 * *`parseJSON $string`*: parseJSON returns the JSON struct represented by the string. Wrapper around [`json.Unmarshal`](https://golang.org/pkg/encoding/json/#Unmarshal)
-* * *`parseYaml $string`*: parseYaml returns the YAML struct represented by the string. Wrapper around [`yaml.Unmarshal`](https://godoc.org/gopkg.in/yaml.v2/#Unmarshal)
+* *`parseYaml $string`*: parseYaml returns the YAML struct represented by the string. Wrapper around [`yaml.Unmarshal`](https://godoc.org/gopkg.in/yaml.v2/#Unmarshal)
 * *`queryEscape $string`*: escapes the string so it can be safely placed inside a URL query. Alias for [`url.QueryEscape`](https://golang.org/pkg/net/url/#QueryEscape) 
 * *`read $string`*: Read the content of the file located at `$path`
 * *`sha1 $string`*: Returns the hexadecimal representation of the SHA1 hash of `$string`.
