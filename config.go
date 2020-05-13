@@ -9,6 +9,7 @@ import (
 type Config struct {
 	Template         string
 	Dest             string
+	UseRegex         bool
 	Watch            bool
 	Wait             *Wait
 	NotifyCmd        string

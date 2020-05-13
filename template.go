@@ -14,6 +14,7 @@ import (
 	"path/filepath"
 	"reflect"
 	"regexp"
+	"runtime"
 	"strconv"
 	"strings"
 	"syscall"
@@ -557,6 +558,62 @@ func filterRunning(config Config, containers Context) Context {
 	}
 }
 
+func getMatchingFiles(re *regexp.Regexp) []string {
+	prefix, _ := re.LiteralPrefix()
+	prefix = win2unixPath(prefix)
+	dir := prefix[:strings.LastIndex(prefix, "/")+1]
+	if dir == "" {
+		dir = "."
+	}
+	return getMatchingFilesInDir(re, dir)
+}
+
+func isFilepathLexicalAbs(path string) bool {
+	return len(path) > 0 && path[0] == '/'
+}
+
+func win2unixPath(path string) string {
+	if runtime.GOOS == "windows" {
+		path = strings.Replace(path, "\\", "/", -1)
+		path = strings.Replace(path, " ", "\\ ", -1)
+	}
+	return path
+}
+
+func getMatchingFilesInDir(re *regexp.Regexp, dir string) []string {
+	files := []string{}
+	prefix, _ := re.LiteralPrefix()
+	isAbs := filepath.IsAbs(prefix) || isFilepathLexicalAbs(prefix)
+
+	walk := func(fn string, fi os.FileInfo, err error) error {
+		if fn == dir {
+			return nil
+		}
+		shortPath := win2unixPath(fn)
+		if !isAbs {
+			shortPath = shortPath[len(dir)+1:]
+		}
+
+		//fmt.Printf("Visited %s\n", shortPath)
+
+		if fi.IsDir() {
+			m1, e1 := regexp.MatchString("^"+shortPath, prefix)
+			m2, e2 := regexp.MatchString("^"+prefix, shortPath)
+
+			if !(m1 || m2) || e1 != nil || e2 != nil {
+				return filepath.SkipDir
+			}
+		}
+
+		if re.MatchString(shortPath) {
+			files = append(files, shortPath)
+		}
+		return nil
+	}
+	filepath.Walk(dir, walk)
+	return files
+}
+
 func GenerateFile(config Config, containers Context) bool {
 	filteredRunningContainers := filterRunning(config, containers)
 	filteredContainers := Context{}
@@ -576,7 +633,36 @@ func GenerateFile(config Config, containers Context) bool {
 		filteredContainers = filteredRunningContainers
 	}
 
-	contents := executeTemplate(config.Template, filteredContainers)
+	if config.UseRegex {
+		pattern := regexp.MustCompile(config.Template)
+
+		files := getMatchingFiles(pattern)
+		if files == nil || len(files) == 0 {
+			log.Fatalf("No files matching path: %s\n", config.Template)
+		}
+
+		success := true
+		for _, templateFile := range files {
+			destResult := []byte{}
+			for _, submatches := range pattern.FindAllStringSubmatchIndex(templateFile, -1) {
+				destResult = pattern.ExpandString(destResult, config.Dest, templateFile, submatches)
+			}
+			destResultStr := string(destResult)
+
+			if !GenerateSingleFile(templateFile, destResultStr, config, filteredContainers) {
+				log.Fatalf("Could not generate file %s\n", destResultStr)
+				success = false
+			}
+		}
+		return success
+	} else {
+		return GenerateSingleFile(config.Template, config.Dest, config, filteredContainers)
+	}
+
+}
+
+func GenerateSingleFile(templateFile string, destFile string, config Config, context Context) bool {
+	contents := executeTemplate(templateFile, context)
 
 	if !config.KeepBlankLines {
 		buf := new(bytes.Buffer)
@@ -584,8 +670,8 @@ func GenerateFile(config Config, containers Context) bool {
 		contents = buf.Bytes()
 	}
 
-	if config.Dest != "" {
-		dest, err := ioutil.TempFile(filepath.Dir(config.Dest), "docker-gen")
+	if destFile != "" {
+		dest, err := ioutil.TempFile(filepath.Dir(destFile), "docker-gen")
 		defer func() {
 			dest.Close()
 			os.Remove(dest.Name())
@@ -599,14 +685,14 @@ func GenerateFile(config Config, containers Context) bool {
 		}
 
 		oldContents := []byte{}
-		if fi, err := os.Stat(config.Dest); err == nil || os.IsNotExist(err) {
+		if fi, err := os.Stat(destFile); err == nil || os.IsNotExist(err) {
 			if err != nil && os.IsNotExist(err) {
-				emptyFile, err := os.Create(config.Dest)
+				emptyFile, err := os.Create(destFile)
 				if err != nil {
 					log.Fatalf("Unable to create empty destination file: %s\n", err)
 				} else {
 					emptyFile.Close()
-					fi, err = os.Stat(config.Dest)
+					fi, err = os.Stat(destFile)
 				}
 			}
 			if err := dest.Chmod(fi.Mode()); err != nil {
@@ -615,18 +701,18 @@ func GenerateFile(config Config, containers Context) bool {
 			if err := dest.Chown(int(fi.Sys().(*syscall.Stat_t).Uid), int(fi.Sys().(*syscall.Stat_t).Gid)); err != nil {
 				log.Fatalf("Unable to chown temp file: %s\n", err)
 			}
-			oldContents, err = ioutil.ReadFile(config.Dest)
+			oldContents, err = ioutil.ReadFile(destFile)
 			if err != nil {
-				log.Fatalf("Unable to compare current file contents: %s: %s\n", config.Dest, err)
+				log.Fatalf("Unable to compare current file contents: %s: %s\n", destFile, err)
 			}
 		}
 
 		if bytes.Compare(oldContents, contents) != 0 {
-			err = os.Rename(dest.Name(), config.Dest)
+			err = os.Rename(dest.Name(), destFile)
 			if err != nil {
-				log.Fatalf("Unable to create dest file %s: %s\n", config.Dest, err)
+				log.Fatalf("Unable to create dest file %s: %s\n", destFile, err)
 			}
-			log.Printf("Generated '%s' from %d containers", config.Dest, len(filteredContainers))
+			log.Printf("Generated '%s' from %d containers", destFile, len(context))
 			return true
 		}
 		return false
