@@ -24,12 +24,46 @@ import (
 	"github.com/go-yaml/yaml"
 )
 
-type templateData struct {
-	templateFile    string
-	destinationFile string
-	now             time.Time
-	Vars            *map[string]string
-	Context
+//noone likes global state
+//why does Go enforce this?
+var (
+	CurrentTemplateFile    string
+	CurrentDestinationFile string
+	Now                    time.Time
+	Vars                   *map[string]string
+)
+
+func setCurrentFileData(templateFile string, destFile string, config Config) {
+	mu.Lock()
+	defer mu.Unlock()
+	CurrentTemplateFile = templateFile
+	CurrentDestinationFile = destFile
+	Now = time.Now()
+	Vars = &config.Vars
+}
+
+func (c *Context) Vars() *map[string]string {
+	mu.RLock()
+	defer mu.RUnlock()
+	return Vars
+}
+
+func (c *Context) TemplateFile() string {
+	mu.RLock()
+	defer mu.RUnlock()
+	return CurrentTemplateFile
+}
+
+func (c *Context) DestinationFile() string {
+	mu.RLock()
+	defer mu.RUnlock()
+	return CurrentDestinationFile
+}
+
+func (c *Context) Now() time.Time {
+	mu.RLock()
+	defer mu.RUnlock()
+	return Now
 }
 
 func exists(path string) (bool, error) {
@@ -686,14 +720,8 @@ func GenerateFile(config Config, containers Context) bool {
 }
 
 func GenerateSingleFile(templateFile string, destFile string, config Config, context Context) bool {
-	tData := templateData{
-		templateFile:    templateFile,
-		destinationFile: destFile,
-		now:             time.Now(),
-		Vars:            &config.Vars,
-		Context:         context,
-	}
-	contents := executeTemplate(templateFile, tData)
+	setCurrentFileData(templateFile, destFile, config)
+	contents := executeTemplate(templateFile, context)
 
 	if !config.KeepBlankLines {
 		buf := new(bytes.Buffer)
@@ -753,14 +781,14 @@ func GenerateSingleFile(templateFile string, destFile string, config Config, con
 	return true
 }
 
-func executeTemplate(templatePath string, data templateData) []byte {
+func executeTemplate(templatePath string, data interface{}) []byte {
 	tmpl, err := newTemplate(filepath.Base(templatePath)).ParseFiles(templatePath)
 	if err != nil {
 		log.Fatalf("Unable to parse template: %s", err)
 	}
 
 	buf := new(bytes.Buffer)
-	err = tmpl.ExecuteTemplate(buf, filepath.Base(templatePath), &data)
+	err = tmpl.ExecuteTemplate(buf, filepath.Base(templatePath), data)
 	if err != nil {
 		log.Fatalf("Template error: %s\n", err)
 	}
