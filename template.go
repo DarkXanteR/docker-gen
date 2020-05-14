@@ -19,6 +19,7 @@ import (
 	"strings"
 	"syscall"
 	"text/template"
+	"time"
 
 	"github.com/go-yaml/yaml"
 )
@@ -26,6 +27,7 @@ import (
 type templateData struct {
 	templateFile    string
 	destinationFile string
+	now             time.Time
 	Context
 }
 
@@ -686,6 +688,7 @@ func GenerateSingleFile(templateFile string, destFile string, config Config, con
 	tData := templateData{
 		templateFile:    templateFile,
 		destinationFile: destFile,
+		now:             time.Now(),
 		Context:         context,
 	}
 	contents := executeTemplate(templateFile, tData)
