@@ -28,7 +28,7 @@ type templateData struct {
 	templateFile    string
 	destinationFile string
 	now             time.Time
-	Vars			*map[string]string
+	Vars            *map[string]string
 	Context
 }
 
@@ -690,7 +690,7 @@ func GenerateSingleFile(templateFile string, destFile string, config Config, con
 		templateFile:    templateFile,
 		destinationFile: destFile,
 		now:             time.Now(),
-		Vars:			 &config.Vars
+		Vars:            &config.Vars,
 		Context:         context,
 	}
 	contents := executeTemplate(templateFile, tData)
