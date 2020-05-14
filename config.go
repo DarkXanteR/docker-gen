@@ -20,6 +20,7 @@ type Config struct {
 	IncludeStopped   bool
 	Interval         int
 	KeepBlankLines   bool
+	Vars             map[string]string
 }
 
 type ConfigFile struct {
