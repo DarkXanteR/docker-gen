@@ -551,6 +551,11 @@ func fileNameNoExt(path string) string {
 	return filepath.Base(path)[:-len(filepath.Ext(path))]
 }
 
+func parseBool(any interface{}) bool {
+	val, _ := strconv.ParseBool(strings.ToLower(fmt.Sprintf("%v", any)))
+	return val
+}
+
 func newTemplate(name string) *template.Template {
 	tmpl := template.New(name).Funcs(template.FuncMap{
 		"closest":                   arrayClosest,
@@ -575,7 +580,7 @@ func newTemplate(name string) *template.Template {
 		"yaml":                      marshalYaml,
 		"keys":                      keys,
 		"last":                      arrayLast,
-		"parseBool":                 strconv.ParseBool,
+		"parseBool":                 parseBool,
 		"parseJson":                 unmarshalJson,
 		"parseYaml":                 unmarshalYaml,
 		"queryEscape":               url.QueryEscape,
