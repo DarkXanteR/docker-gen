@@ -721,7 +721,7 @@ func GenerateFile(config Config, containers Context) bool {
 
 func GenerateSingleFile(templateFile string, destFile string, config Config, context Context) bool {
 	setCurrentFileData(templateFile, destFile, config)
-	contents := executeTemplate(templateFile, context)
+	contents := executeTemplate(templateFile, &context)
 
 	if !config.KeepBlankLines {
 		buf := new(bytes.Buffer)
