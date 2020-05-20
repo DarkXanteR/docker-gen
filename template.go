@@ -726,7 +726,7 @@ func GenerateFile(config Config, containers Context) bool {
 
 func GenerateSingleFile(templateFile string, destFile string, config Config, context Context) bool {
 	setCurrentFileData(templateFile, destFile, config)
-	contents := executeTemplate(templateFile, &context)
+	contents := executeTemplate(templateFile, &config, &context)
 
 	if !config.KeepBlankLines {
 		buf := new(bytes.Buffer)
@@ -786,8 +786,12 @@ func GenerateSingleFile(templateFile string, destFile string, config Config, con
 	return true
 }
 
-func executeTemplate(templatePath string, data interface{}) []byte {
-	tmpl, err := newTemplate(filepath.Base(templatePath)).ParseFiles(templatePath)
+func executeTemplate(templatePath string, config *Config, data interface{}) []byte {
+	missingkey := "missingkey=default"
+	if config.Missingkey != "" {
+		missingkey = "missingkey=" + config.Missingkey
+	}
+	tmpl, err := newTemplate(filepath.Base(templatePath)).Option(missingkey).ParseFiles(templatePath)
 	if err != nil {
 		log.Fatalf("Unable to parse template: %s", err)
 	}

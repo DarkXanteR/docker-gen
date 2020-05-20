@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"sync"
 
-	"../.."
+	dockergen "../.."
 	"github.com/BurntSushi/toml"
 	docker "github.com/fsouza/go-dockerclient"
 )
@@ -29,6 +29,7 @@ var (
 	includeStopped        bool
 	configFiles           stringslice
 	configs               dockergen.ConfigFile
+	missingkey            string
 	interval              int
 	keepBlankLines        bool
 	endpoint              string
@@ -110,6 +111,7 @@ func initFlags() {
 	flag.StringVar(&tlsKey, "tlskey", filepath.Join(certPath, "key.pem"), "path to TLS client key file")
 	flag.StringVar(&tlsCaCert, "tlscacert", filepath.Join(certPath, "ca.pem"), "path to TLS CA certificate file")
 	flag.BoolVar(&tlsVerify, "tlsverify", os.Getenv("DOCKER_TLS_VERIFY") != "", "verify docker daemon's TLS certicate")
+	flag.StringVar(&missingkey, "missingkey", "default", "set missingkey option for template generation")
 
 	flag.Usage = usage
 	flag.Parse()
@@ -148,6 +150,7 @@ func main() {
 			NotifyCmd:        notifyCmd,
 			NotifyOutput:     notifyOutput,
 			NotifyContainers: make(map[string]int),
+			Missingkey:       missingkey,
 			OnlyExposed:      onlyExposed,
 			OnlyPublished:    onlyPublished,
 			IncludeStopped:   includeStopped,
