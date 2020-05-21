@@ -15,6 +15,7 @@ type Config struct {
 	NotifyCmd        string
 	NotifyOutput     bool
 	NotifyContainers map[string]int
+	Missingkey       string
 	OnlyExposed      bool
 	OnlyPublished    bool
 	IncludeStopped   bool
