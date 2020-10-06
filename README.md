@@ -1,8 +1,8 @@
 docker-gen
 =====
 
-![latest 0.7.3](https://img.shields.io/badge/latest-0.7.3-green.svg?style=flat)
-![Docker Image CI](https://github.com/matthiasmetzen/docker-gen/workflows/Docker%20Image%20CI/badge.svg?branch=master)
+![latest 0.7.4](https://img.shields.io/badge/latest-0.7.4-green.svg?style=flat)
+![Docker Image CI](https://github.com/DarkXanteR/docker-gen/workflows/Docker%20Image%20CI/badge.svg?branch=master)
 ![License MIT](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)
 
 `docker-gen` is a file generator that renders templates using docker container meta-data.
@@ -25,17 +25,17 @@ There are three common ways to run docker-gen:
 
 #### Host Install
 
-Linux/OSX binaries for release [0.7.3](https://github.com/jwilder/docker-gen/releases)
+Linux/OSX binaries for release [0.7.4](https://github.com/jwilder/docker-gen/releases)
 
-* [amd64](https://github.com/jwilder/docker-gen/releases/download/0.7.3/docker-gen-linux-amd64-0.7.3.tar.gz)
-* [i386](https://github.com/jwilder/docker-gen/releases/download/0.7.3/docker-gen-linux-i386-0.7.3.tar.gz)
-* [alpine-linux](https://github.com/jwilder/docker-gen/releases/download/0.7.3/docker-gen-alpine-linux-amd64-0.7.3.tar.gz)
+* [amd64](https://github.com/jwilder/docker-gen/releases/download/0.7.4/docker-gen-linux-amd64-0.7.4.tar.gz)
+* [i386](https://github.com/jwilder/docker-gen/releases/download/0.7.4/docker-gen-linux-i386-0.7.4.tar.gz)
+* [alpine-linux](https://github.com/jwilder/docker-gen/releases/download/0.7.4/docker-gen-alpine-linux-amd64-0.7.4.tar.gz)
 
 Download the version you need, untar, and install to your PATH.
 
 ```
-$ wget https://github.com/jwilder/docker-gen/releases/download/0.7.3/docker-gen-linux-amd64-0.7.3.tar.gz
-$ tar xvzf docker-gen-linux-amd64-0.7.3.tar.gz
+$ wget https://github.com/jwilder/docker-gen/releases/download/0.7.3/docker-gen-linux-amd64-0.7.4.tar.gz
+$ tar xvzf docker-gen-linux-amd64-0.7.4.tar.gz
 $ ./docker-gen
 ```
 
@@ -372,10 +372,10 @@ The exhaustive list of functions, among with their implemebtation, is available 
 * *`keys $map`*: Returns the keys from `$map`. If `$map` is `nil`, a `nil` is returned. If `$map` is not a `map`, an error will be thrown.
 * *`last $array`*: Returns the last value of an array.
 * *`replace $string $old $new $count`*: Replaces up to `$count` occurences of `$old` with `$new` in `$string`. Alias for [`strings.Replace`](http://golang.org/pkg/strings/#Replace)
-* *`parseBool $string`*: parseBool returns the boolean value represented by the string. It accepts 1, t, T, TRUE, true, True, 0, f, F, FALSE, false, False. Any other value returns an error. Alias for [`strconv.ParseBool`](http://golang.org/pkg/strconv/#ParseBool) 
+* *`parseBool $string`*: parseBool returns the boolean value represented by the string. It accepts 1, t, T, TRUE, true, True, 0, f, F, FALSE, false, False. Any other value returns an error. Alias for [`strconv.ParseBool`](http://golang.org/pkg/strconv/#ParseBool)
 * *`parseJSON $string`*: parseJSON returns the JSON struct represented by the string. Wrapper around [`json.Unmarshal`](https://golang.org/pkg/encoding/json/#Unmarshal)
 * *`parseYaml $string`*: parseYaml returns the YAML struct represented by the string. Wrapper around [`yaml.Unmarshal`](https://godoc.org/gopkg.in/yaml.v2/#Unmarshal)
-* *`queryEscape $string`*: escapes the string so it can be safely placed inside a URL query. Alias for [`url.QueryEscape`](https://golang.org/pkg/net/url/#QueryEscape) 
+* *`queryEscape $string`*: escapes the string so it can be safely placed inside a URL query. Alias for [`url.QueryEscape`](https://golang.org/pkg/net/url/#QueryEscape)
 * *`read $string`*: Read the content of the file located at `$path`
 * *`sha1 $string`*: Returns the hexadecimal representation of the SHA1 hash of `$string`.
 * *`split $string $sep`*: Splits `$string` into a slice of substrings delimited by `$sep`. Alias for [`strings.Split`](http://golang.org/pkg/strings/#Split)

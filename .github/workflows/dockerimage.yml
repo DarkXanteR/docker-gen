@@ -15,16 +15,16 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v2
-    
+
     - name: build
       uses: whoan/docker-build-with-cache-action@v5
       env:
         DOCKER_BUILDKIT: 1
       with:
-        username: matthiasmetzen
+        username: DarkXanteR
         password: "${{ secrets.GITHUB_TOKEN }}"  # you don't need to manually set this secret. GitHub does it on your behalf
         registry: docker.pkg.github.com
         push_git_tag: true
-        image_name: matthiasmetzen/docker-gen/docker-gen
+        image_name: DarkXanteR/docker-gen/docker-gen
         image_tag: alpine,latest
         dockerfile: Dockerfile
